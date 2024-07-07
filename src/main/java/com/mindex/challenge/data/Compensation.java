@@ -5,6 +5,7 @@ import java.time.LocalDate;
 
 public class Compensation {
 
+	// From my interpretation of the instructions, it sounds like an Employee record is being asked for, but would it be better to just have Compensation keyed on an employeeId instead?
 	private Employee employee;
 	private BigDecimal salary;
 	private String effectiveDate;
