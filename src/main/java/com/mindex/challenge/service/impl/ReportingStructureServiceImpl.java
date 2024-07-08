@@ -3,11 +3,15 @@ package com.mindex.challenge.service.impl;
 import com.mindex.challenge.dao.EmployeeRepository;
 import com.mindex.challenge.data.Employee;
 import com.mindex.challenge.data.ReportingStructure;
+import com.mindex.challenge.service.EmployeeService;
 import com.mindex.challenge.service.ReportingStructureService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ReportingStructureServiceImpl implements ReportingStructureService {
@@ -17,11 +21,22 @@ public class ReportingStructureServiceImpl implements ReportingStructureService 
     @Autowired
     private EmployeeRepository employeeRepository;
 
+	@Autowired
+	private EmployeeService employeeService;
+
 	@Override
 	public ReportingStructure read(String employeeId) {
         LOG.debug("Creating ReportingStructure for employeeId [{}]", employeeId);
 
         Employee employee = employeeRepository.findByEmployeeId(employeeId);
+		if (employee.getDirectReports() != null) {
+			List <Employee> fullyPopulatedEmployeeList = new ArrayList<>();
+			for (Employee directReportEmployee : employee.getDirectReports()) {
+				// TODO : Is there a better way to  fill in this data instead of querying for every direct report?
+				fullyPopulatedEmployeeList.add(employeeService.read(directReportEmployee.getEmployeeId()));
+			}
+			employee.setDirectReports(fullyPopulatedEmployeeList);
+		}
         if (employee == null) {
             throw new RuntimeException("Error while attempting to find employee with employeeId: " + employeeId);
         }
