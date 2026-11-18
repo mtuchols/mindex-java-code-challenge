@@ -28,6 +28,7 @@ public class DataBootstrap {
 
         try {
             employees = objectMapper.readValue(inputStream, Employee[].class);
+            System.out.println("hello , test");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
